@@ -11,16 +11,16 @@ start:-
   new_world('mapa'),
   draw_world.
 
-%  restarts the game
+% restarts the game
 restart:-
   reconsult('pacman'),
   start.
 
 % Game Over event  
-the_end(Ghost):- write('GAME OVER'), nl, write(Ghost), write(' got ya!').
+the_end(Ghost):- write('GAME OVER'), nl, write('O monstro '), write(Ghost), write(' te matou'), nl, write('Sua pontuacao foi de '), count_points, write(' pontos'), nl, write('BAD END!!!').
 
 % Win event
-win:- nl, write('U WIN!'),nl.
+win:- nl, write('HAPPY END!!!'),nl.
 
 % GAME - this section has to do with the main elements of the game
  % Creates a new world (map) from a selected file
@@ -58,6 +58,14 @@ create_balls :-
   fail. 
   create_balls. 
   
+% Contagem de pontos
+
+count_points :-  
+  findall(element(X,Y,0),ball(X,Y),L),
+  length(L,X),
+  N is 96 - X,
+  write(N).
+   
 % INTERFACE - this section has to do with drawing the game elements
 % Draws a new world (Main Interface procedure)
 draw_world :- 
