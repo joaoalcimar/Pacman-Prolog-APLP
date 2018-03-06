@@ -5,6 +5,12 @@
   :-dynamic width/1.
   :-dynamic the_end/1.
   :-dynamic win/1.
+
+% Menu
+
+menu:-
+  write('Para jogar, digite start.'),nl,
+  write('Para ver o ranking de jogadores, digite ranking.'),nl,
   
 % loads game setting the file "mapa.pl" as default map 
 start:-
@@ -58,7 +64,7 @@ create_balls :-
   fail. 
   create_balls. 
   
-% Contagem de pontos
+% Sistema de pontos
 
 count_points :-  
   findall(element(X,Y,0),ball(X,Y),L),
@@ -71,6 +77,47 @@ count_points_bonus :-
   length(L,X),
   N is 100 + 96 - X,
   write(N).
+
+write_leaves([]).
+write_leaves([H|T]) :- write_leaves(T), write_leaves(H).
+write_leaves(X) :- write(X),nl.
+
+ranking :-
+  L = ([[5,'Robot'],[7,'Avenger'],[15,'GeekGuy'],[35,'Master666']]),
+  write('      MELHORES PONTUACOES       '),nl,
+  write_leaves(L).
+  
+add_score(N,P,L) :-
+  N1 = [P,N],
+  append(L,N1),
+  sort_list(L,S),
+  L is S.
+  
+sort_list(L,S) :-
+  sort(0,  @=<, L,  Sorted).  
+  
+ 
+  
+% Sistema de vidas
+
+/*revamp :-
+  pacman(2,2,normal),
+  ghost(2,9,'Black'), 
+  ghost(9,9,'Red'),
+  diamond(2,6).
+  %chamar o mapa do jeito que tava
+  
+life_verify(0) :-
+  the_end(Ghost).
+  
+life_verify(N) :-
+  ghost(X,Y,Ghost),
+  pacman(X,Y,normal),
+  draw_world,
+  revamp,
+  N1 is N - 1,
+  life_verify(N1). */
+
    
 % INTERFACE - this section has to do with drawing the game elements
 % Draws a new world (Main Interface procedure)
