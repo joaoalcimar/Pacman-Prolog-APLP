@@ -83,7 +83,7 @@ ranking :-
   write_leaves(L).
 
 add_score(N,P) :-
-  N1 = [P,N],
+  N1 = [[P,N]],
   nb_getval(counter, L),
   append(L,N1,L1),
   sort_list(L1,S),
@@ -363,6 +363,5 @@ adj((X,Y),(NX,Y)) :-
   
 distance((X,Y),(X2,Y2),D) :-
   D is abs(X - X2) + abs(Y - Y2).
-
 
 
