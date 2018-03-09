@@ -200,9 +200,9 @@ move_pacman(X,Y):-
 move_ghosts:-
 ghost(X,Y,'Red'),
 ghost(W,Z,'Black'),
-h1(X,Y,NX,NY),
+hunt(X,Y,NX,NY),
 move_ghost(NX,NY,'Red'),
-h1(W,Z,NW,NZ),
+hunt(W,Z,NW,NZ),
 move_ghost(NW,NZ,'Black').
 
 move_ghost(X,Y,Z):-
@@ -290,16 +290,16 @@ pacman(W,Z,normal),
 A is W - X,
 B is Z - Y.
 
-% heuristic1 - gives the "shortest" path to find pacman
+% algoritmo de caça dos fantasmas
 
-h1(X,Y,NX,NY):-
+hunt(X,Y,NX,NY):-
 aux(X,Y,A,B),
 A == 0,
 B == 0,
 NX is X,
 NY is Y.
 
-h1(X,Y,NX,NY):-
+hunt(X,Y,NX,NY):-
 aux(X,Y,A,B),
 A > 0,
 abs(A) >= abs(B),
@@ -308,7 +308,7 @@ NY is Y,
 adjs((X,Y),P),
 member((NX,NY),P).
 
-h1(X,Y,NX,NY):-
+hunt(X,Y,NX,NY):-
 aux(X,Y,A,B),
 A < 0,
 abs(A) >= abs(B),
@@ -317,7 +317,7 @@ NY is Y,
 adjs((X,Y),P),
 member((NX,NY),P).
 
-h1(X,Y,NX,NY):-
+hunt(X,Y,NX,NY):-
 aux(X,Y,A,B),
 B > 0,
 abs(B) > abs(A),
@@ -326,7 +326,7 @@ NX is X,
 adjs((X,Y),P),
 member((NX,NY),P).
 
-h1(X,Y,NX,NY):-
+hunt(X,Y,NX,NY):-
 aux(X,Y,A,B),
 B < 0,
 abs(B) > abs(A),
@@ -335,7 +335,7 @@ NX is X,
 adjs((X,Y),P),
 member((NX,NY),P).
 
-h1(X,Y,NX,NY):-
+hunt(X,Y,NX,NY):-
 adjs((X,Y),P),
 member((NX,NY),P).
 
@@ -363,5 +363,3 @@ adj((X,Y),(NX,Y)) :-
   
 distance((X,Y),(X2,Y2),D) :-
   D is abs(X - X2) + abs(Y - Y2).
-
-
