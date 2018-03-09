@@ -21,13 +21,8 @@ the_end(Ghost):- write('GAME OVER'), nl, write('O monstro '), write(Ghost), writ
   write(' pontos'), nl, write('BAD END!!!'), nl, write('Digite seu nome de jogador (lembre do ponto final): '), read(N), count_points(P),add_score(N,P).
 
 % Evento de zeramento de jogo
-win:- nl, write('GREETZ!!!'), nl, write('Sua pontuacao foi de '), count_points_bonus, write(' pontos').
-
-% Usar outro mapa
- new_world :- 
-  write('Indique path de novo Mundo:'), 
-  read(Whatever),
-  new_world(Whatever).
+win:- nl, write('GREETZ!!!'), nl, write('Sua pontuacao foi de '), count_points_bonus, write(' pontos'), nl, 
+  write('Digite seu nome de jogador (lembre do ponto final): '), read(N), count_points_bonus(P),add_score(N,P).
 
 new_world(Whatever):-
   consult(Whatever),
@@ -68,6 +63,11 @@ count_points_bonus :-
   length(L,X),
   N is 100 + 96 - X,
   write(N).  
+  
+count_points_bonus(N) :-  
+  findall(element(X,Y,0),ball(X,Y),L),
+  length(L,X),
+  N is 100 + 96 - X.
   
 write_leaves([]).
 write_leaves([H|T]) :- write_leaves(T), write_leaves(H).
@@ -262,7 +262,7 @@ test_pos(X,Y):-
   
 test_pos(X,Y):-
   element(X,Y,1),
-  write('invalid move - Error: Wall on the way'),
+  write('movimento invalido - Error: Parede no caminho'),
   nl,!,fail.
 
 test_pos(X,Y):-
@@ -270,7 +270,7 @@ test_pos(X,Y):-
 
 test_pos(X,Y):-
   \+element(X,Y,_),
-  write('invalid move - Error: Outer Space'),
+  write('movimento invalido - Error: Sem Espaço'),
   nl,!,fail.
 
 test_pos(X,Y):-
