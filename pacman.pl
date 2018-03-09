@@ -1,35 +1,27 @@
-% LOAD - this section has to do with the game loading process
   :-use_module(library(lists)). 
   :-dynamic ball/2. 
   :-dynamic height/1. 
   :-dynamic width/1.
   :-dynamic the_end/1.
   :-dynamic win/1.
-
-% Menu
-
-menu:-
-  write('Para jogar, digite start.'),nl,
-  write('Para ver o ranking de jogadores, digite ranking.'),nl,
   
-% loads game setting the file "mapa.pl" as default map 
+% Carrega mapa
 start:-
   new_world('mapa'),
   draw_world.
 
-% restarts the game
+% Reinicia Jogo
 restart:-
   reconsult('pacman'),
   start.
 
-% Game Over event  
+% Evento de game over
 the_end(Ghost):- write('GAME OVER'), nl, write('O monstro '), write(Ghost), write(' te matou'), nl, write('Sua pontuacao foi de '), count_points, write(' pontos'), nl, write('BAD END!!!').
 
-% Win event
-win:- nl, write('HAPPY END!!!'), nl, write('Sua pontuacao foi de '), count_points_bonus, write(' pontos').
+% Evento de zeramento de jogo
+win:- nl, write('GREETZ!!!'), nl, write('Sua pontuacao foi de '), count_points_bonus, write(' pontos').
 
-% GAME - this section has to do with the main elements of the game
- % Creates a new world (map) from a selected file
+% Usar outro mapa
  new_world :- 
   write('Indique path de novo Mundo:'), 
   read(Whatever),
@@ -46,23 +38,15 @@ new_world(Whatever):-
   assert(width(W)), 
   create_balls. 
 
-% these are just pre-defined values to width and height of map
-% (they will never be used, however they are necessary to the well behaviour of the program)
-width(0).
-height(0).
+% Variaveis de dimensoes do jogo.
+  width(0).
+  height(0).
 
-% Gets an element by its coordinates   
-element(X,Y,Whatever):- 
+% Get de elemento pelas coordenadas
+  element(X,Y,Whatever):- 
   grid(G), 
   nth1(Y,G,Line), 
   nth1(X,Line,Whatever). 
-  
-% This auxiliary procedure asserts all the ball coordinates in the beggining of the game 
-create_balls :- 
-  element(X,Y,0), 
-  assert(ball(X,Y)), 
-  fail. 
-  create_balls. 
   
 % Sistema de pontos
 
@@ -76,13 +60,13 @@ count_points_bonus :-
   findall(element(X,Y,0),ball(X,Y),L),
   length(L,X),
   N is 100 + 96 - X,
-  write(N).
-
+  write(N).  
+  
 write_leaves([]).
 write_leaves([H|T]) :- write_leaves(T), write_leaves(H).
 write_leaves(X) :- write(X),nl.
 
-ranking :-
+/*ranking :-
   L = ([[5,'Robot'],[7,'Avenger'],[15,'GeekGuy'],[35,'Master666']]),
   write('      MELHORES PONTUACOES       '),nl,
   write_leaves(L).
@@ -94,10 +78,9 @@ add_score(N,P,L) :-
   L is S.
   
 sort_list(L,S) :-
-  sort(0,  @=<, L,  Sorted).  
+  sort(0,  @=<, L,  Sorted).   */
   
- 
-  
+   
 % Sistema de vidas
 
 /*revamp :-
@@ -116,17 +99,23 @@ life_verify(N) :-
   draw_world,
   revamp,
   N1 is N - 1,
-  life_verify(N1). */
-
-   
-% INTERFACE - this section has to do with drawing the game elements
-% Draws a new world (Main Interface procedure)
-draw_world :- 
+  life_verify(N1). */  
+  
+% Insercao das bolas brancas
+  create_balls :- 
+  element(X,Y,0), 
+  assert(ball(X,Y)), 
+  fail. 
+  create_balls. 
+  
+% INTERFACE - desenha os elementos do jogo
+% desenhar mapa do jogo
+  draw_world :- 
   height(Lim), 
   draw_lines(1,Lim). 
   
-% Auxiliary procedure which draws all lines using draw_line(Y)   
-draw_lines(Y,Lim) :- 
+% Desenha as linhas de jogo  
+  draw_lines(Y,Lim) :- 
   Y > Lim,!. 
   draw_lines(Y,Lim) :- 
   draw_line(Y), 
@@ -134,13 +123,13 @@ draw_lines(Y,Lim) :-
   NY is Y+1, 
   draw_lines(NY,Lim). 
   
-% Draws a single line 
-draw_line(Y) :- 
+% Desenhar linha unica
+  draw_line(Y) :- 
   width(Lim), 
   draw_a_line(1,Y,Lim). 
   
-% Draws all chars of a selected line
-draw_a_line(X,_,Lim) :- 
+% Desenha caracters de uma linha
+  draw_a_line(X,_,Lim) :- 
   X > Lim. 
   draw_a_line(X,Y,Lim) :- 
   X =< Lim, 
@@ -148,7 +137,7 @@ draw_a_line(X,_,Lim) :-
   NX is X + 1, 
   draw_a_line(NX,Y,Lim). 
   
-% Draw X,Y coordinates 
+% Desenha os objetos do jogo em coordenadas X,Y
 draw(X,Y):- 
   ghost(X,Y,_), 
   draw_ghost. 
@@ -174,19 +163,15 @@ draw(_,_,0):-write(' ').
 draw(_,_,1):-write('#').
 draw(_,_,BlackHole) :- BlackHole > 1,write('~').
 
-% DYNAMICS - this section has to do with basic movement procedures
-% Change PAC-MAN Position 
+% Movimentos basicos
+% Mudar a posicao do pac
   
 move_pacman(X,Y):-
-  ghost(X,Y,_),
-  pacman(_,_,normal),
-  fail.
-
-/*  retract(pacman(_,_,normal)),
+  ghost(X,Y,Ghost),
+  retract(pacman(_,_,normal)),
   assert(pacman(X,Y,normal)),
   restart,
   the_end(Ghost).
-*/
   
 move_pacman(X,Y):-
   blackhole(X,Y,NX,NY),  
@@ -199,14 +184,14 @@ move_pacman(X,Y):-
   retract(pacman(_,_,T)),
   assert(pacman(X,Y,T)).
 
-% Change Ghosts Position  
+% Muda posicao dos fantasmas
 move_ghosts:-
-  ghost(X,Y,'Red'),
-  ghost(W,Z,'Black'),
-  h1(X,Y,NX,NY),
-  move_ghost(NX,NY,'Red'),
-  h1(W,Z,NW,NZ),
-  move_ghost(NW,NZ,'Black').
+ghost(X,Y,'Red'),
+ghost(W,Z,'Black'),
+h1(X,Y,NX,NY),
+move_ghost(NX,NY,'Red'),
+h1(W,Z,NW,NZ),
+move_ghost(NW,NZ,'Black').
 
 move_ghost(X,Y,Z):-
   blackhole(X,Y,NX,NY),
@@ -217,10 +202,10 @@ move_ghost(X,Y,Z):-
   retract(ghost(_,_,Z)),
   assert(ghost(X,Y,Z)).
 
-% implements this game and handles WIN and GAME-OVER events
+% reacao do jogo a vitoria ou derrota
 play :-
   ghost(X,Y,Ghost),
-  pacman(X,Y,normal),
+  pacman(X,Y,_),
   restart,
   the_end(Ghost).
   
@@ -237,7 +222,7 @@ move :-
   read(INPUT),
   move(INPUT).
   
-% sets moving directions to the Human player
+% movimentacao do pacman
 move(8):-
   pacman(X,Y,_),
   NY is Y - 1,
@@ -258,8 +243,7 @@ move(6):-
   NX is X + 1,
   move_pacman(NX,Y).
   
-% RULES - this section sets restritions and special events
-% tests a position about the existance of ghosts, walls and also
+% testa posicao de paredes e fantasmas
 test_pos(X,Y):-
   ghost(X,Y,_),
   assert(the_end).
@@ -280,71 +264,70 @@ test_pos(X,Y):-
 test_pos(X,Y):-
   \+ball(X,Y).
 
-% handles blackhole positions 
+% Tuneis especiais
  blackhole(X,Y,NX,NY):-
  element(X,Y,Z),
  Z > 1,
  element(NX,NY,Z),
  \+ (NX == X,NY == Y),!. 
   
-% AI - sets Artificial Inteligence
+% Inteligencia dos fantasmas
+
+aux(X,Y,A,B):-
+pacman(W,Z,normal),
+A is W - X,
+B is Z - Y.
 
 % heuristic1 - gives the "shortest" path to find pacman
 
 h1(X,Y,NX,NY):-
-  aux(X,Y,A,B),
-  A == 0,
-  B == 0,
-  NX is X,
-  NY is Y.
+aux(X,Y,A,B),
+A == 0,
+B == 0,
+NX is X,
+NY is Y.
 
 h1(X,Y,NX,NY):-
-  aux(X,Y,A,B),
-  A > 0,
-  abs(A) >= abs(B),
-  NX is X + 1,
-  NY is Y,
-  adjs((X,Y),P),
-  member((NX,NY),P).
+aux(X,Y,A,B),
+A > 0,
+abs(A) >= abs(B),
+NX is X + 1,
+NY is Y,
+adjs((X,Y),P),
+member((NX,NY),P).
 
 h1(X,Y,NX,NY):-
-  aux(X,Y,A,B),
-  A < 0,
-  abs(A) >= abs(B),
-  NX is X - 1,
-  NY is Y,
-  adjs((X,Y),P),
-  member((NX,NY),P).
+aux(X,Y,A,B),
+A < 0,
+abs(A) >= abs(B),
+NX is X - 1,
+NY is Y,
+adjs((X,Y),P),
+member((NX,NY),P).
 
 h1(X,Y,NX,NY):-
-  aux(X,Y,A,B),
-  B > 0,
-  abs(B) > abs(A),
-  NY is Y + 1,
-  NX is X,
-  adjs((X,Y),P),
-  member((NX,NY),P).
+aux(X,Y,A,B),
+B > 0,
+abs(B) > abs(A),
+NY is Y + 1,
+NX is X,
+adjs((X,Y),P),
+member((NX,NY),P).
 
 h1(X,Y,NX,NY):-
-  aux(X,Y,A,B),
-  B < 0,
-  abs(B) > abs(A),
-  NY is Y - 1,
-  NX is X,
-  adjs((X,Y),P),
-  member((NX,NY),P).
+aux(X,Y,A,B),
+B < 0,
+abs(B) > abs(A),
+NY is Y - 1,
+NX is X,
+adjs((X,Y),P),
+member((NX,NY),P).
 
 h1(X,Y,NX,NY):-
-  adjs((X,Y),P),
-  member((NX,NY),P).
+adjs((X,Y),P),
+member((NX,NY),P).
 
-% auxiliary predicate to obtain horizontal/vertical distance to target (pac-man)
-aux(X,Y,A,B):-
-  pacman(W,Z,normal),
-  A is W - X,
-  B is Z - Y.
-
-% this auxiliary predicate gives free adjacent positions to X,Y coordinates
+% posicoes adjacentes livres
 adjs(P,As) :-
   findall((X,Y),(adj(P,(X,Y)),\+ element(X,Y,1)),As).
 
@@ -369,26 +352,5 @@ adj((X,Y),(NX,Y)) :-
 distance((X,Y),(X2,Y2),D) :-
   D is abs(X - X2) + abs(Y - Y2).
 
-% MISCELLANEOUS - this section has to do with non important stuff
-% auxiliary predicate that lists creatures and its positions
-creatures:-
-  pacman(X,Y,Z),
-  status('Pacman',X,Y,Z),
-  ghost(_,_,C),
-  creature_ghosts(C).
-  
-creature_ghosts(C):-
-  ghost(A,B,C),
-  nl,
-  status('Ghost',A,B,C),
-  C \= F,
-  creature_ghosts(F).
-  
-status(A,X,Y,Z):-
-  write(A),write(': '),write(Z),write(' X='),write(X),write(' Y='),write(Y).
-  
-dump(A,B):-
-  write('A: '),write(A),nl,
-  write('B: '),write(B),nl.
 
 
