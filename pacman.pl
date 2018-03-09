@@ -8,6 +8,7 @@
 % Carrega mapa
 start:-
   new_world('mapa'),
+  iniciaRanking,
   draw_world.
 
 % Reinicia Jogo
@@ -16,7 +17,8 @@ restart:-
   start.
 
 % Evento de game over
-the_end(Ghost):- write('GAME OVER'), nl, write('O monstro '), write(Ghost), write(' te matou'), nl, write('Sua pontuacao foi de '), count_points, write(' pontos'), nl, write('BAD END!!!').
+the_end(Ghost):- write('GAME OVER'), nl, write('O monstro '), write(Ghost), write(' te matou'), nl, write('Sua pontuacao foi de '), count_points,
+  write(' pontos'), nl, write('BAD END!!!'), nl, write('Digite seu nome de jogador (lembre do ponto final): '), read(N), count_points(P),add_score(N,P).
 
 % Evento de zeramento de jogo
 win:- nl, write('GREETZ!!!'), nl, write('Sua pontuacao foi de '), count_points_bonus, write(' pontos').
@@ -56,6 +58,11 @@ count_points :-
   N is 96 - X,
   write(N).
   
+count_points(N):-  
+  findall(element(X,Y,0),ball(X,Y),L),
+  length(L,X),
+  N is 96 - X.
+  
 count_points_bonus :-  
   findall(element(X,Y,0),ball(X,Y),L),
   length(L,X),
@@ -66,21 +73,26 @@ write_leaves([]).
 write_leaves([H|T]) :- write_leaves(T), write_leaves(H).
 write_leaves(X) :- write(X),nl.
 
-/*ranking :-
-  L = ([[5,'Robot'],[7,'Avenger'],[15,'GeekGuy'],[35,'Master666']]),
+iniciaRanking :-
+  C = ([[5,'Robot'],[7,'Avenger'],[15,'GeekGuy'],[35,'Master666']]),
+  nb_setval(counter, C).
+
+ranking :-
+  nb_getval(counter, L),
   write('      MELHORES PONTUACOES       '),nl,
   write_leaves(L).
-  
-add_score(N,P,L) :-
+
+add_score(N,P) :-
   N1 = [P,N],
-  append(L,N1),
-  sort_list(L,S),
-  L is S.
-  
+  nb_getval(counter, L),
+  append(L,N1,L1),
+  sort_list(L1,S),
+  nb_setval(counter, S).
+
 sort_list(L,S) :-
-  sort(0,  @=<, L,  Sorted).   */
+  sort(0,  @=<, L,  S).
   
-   
+  
 % Sistema de vidas
 
 /*revamp :-
